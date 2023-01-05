@@ -13,12 +13,15 @@ public class DragObject : MonoBehaviour
 
     private Vector3 GetMouseWorldPos()
     {
-        Vector3 mousePoint = Input.mousePosition;
+        /*Vector3 mousePoint = Input.mousePosition;
         mousePoint.z = mzCoord;
 
         //Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(mousePoint);
         //return new Vector3(mouseWorld.x, 1.0f, mouseWorld.z);
-        return Camera.main.ScreenToWorldPoint(mousePoint);
+        return Camera.main.ScreenToWorldPoint(mousePoint);*/
+
+
+        return MousePosition.Instance.GridPosition;
     }
 
     private void OnMouseDown()
@@ -40,7 +43,7 @@ public class DragObject : MonoBehaviour
         // I don't want the tiles to go up and down based on perspective, but oh well
         //Vector3 mouse = GetMouseWorldPos();
         //transform.position = new Vector3(mouse.x + mOffset.x, transform.position.y, mouse.z + mOffset.z);
-        transform.position = GetMouseWorldPos() + mOffset;
+        transform.position = GetMouseWorldPos() + mOffset + Vector3.up;
         Swap();
         
     }
