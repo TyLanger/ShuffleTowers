@@ -16,6 +16,8 @@ public class TileSelector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Instance = this;
+
         offscreenHome = transform.position;
         GridBuilder.Instance.OnTileSelected += TileSelected;
         plane.OnDeselect += TileDeselected;
@@ -40,4 +42,6 @@ public class TileSelector : MonoBehaviour
         hasTarget = false;
         transform.position = offscreenHome;
     }
+
+    
 }

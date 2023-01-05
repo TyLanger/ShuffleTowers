@@ -10,6 +10,7 @@ public class Tile : MonoBehaviour
     [SerializeField] float moveSpeed = 10;
     [SerializeField] TileType tileType;
 
+    bool hasTower = false;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +22,16 @@ public class Tile : MonoBehaviour
     void Update()
     {
         transform.position = Vector3.MoveTowards(transform.position, desiredPostion, moveSpeed * Time.deltaTime);
+    }
+
+    public bool CanBuild()
+    {
+        return !hasTower;
+    }
+
+    public void BuiltTower()
+    {
+        hasTower = true;
     }
 
     public void SetDesiredPosition(Vector3 pos)

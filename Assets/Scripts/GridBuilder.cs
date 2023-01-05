@@ -17,6 +17,12 @@ public class GridBuilder : MonoBehaviour
 
     public event System.Action<Transform> OnTileSelected;
 
+    public DeselectPlane plane;
+
+    bool tileSelected = false;
+    Coords currentSelected;
+
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -24,14 +30,10 @@ public class GridBuilder : MonoBehaviour
 
         grid = new Tile[width, height];
         PopulateGrid();
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+        plane.OnDeselect += TileDeselected;
 
+    }
     
 
     void PopulateGrid()
@@ -92,14 +94,55 @@ public class GridBuilder : MonoBehaviour
 
         grid[a.x, a.y].SetDesiredPosition(GetPosition(a.x, a.y));
         grid[b.x, b.y].SetDesiredPosition(GetPosition(b.x, b.y));
+
+        if(currentSelected.Equals(a))
+        {
+            currentSelected = b;
+        } else if(currentSelected.Equals(b))
+        {
+            currentSelected = a;
+        }
     }
 
     public void TileSelected(Coords c)
     {
         var trans = grid[c.x, c.y].transform;
         OnTileSelected?.Invoke(trans);
+        currentSelected = c;
+        tileSelected = true;
     }
 
+    void TileDeselected()
+    {
+        tileSelected = false;
+    }
+
+    public bool CanBuildOnSelection()
+    {
+        if(HasSelection())
+        {
+            return grid[currentSelected.x, currentSelected.y].CanBuild();
+        } 
+        else
+        {
+            return false;
+        }
+    }
+
+    public void BuiltOnSelection()
+    {
+        grid[currentSelected.x, currentSelected.y].BuiltTower();
+    }
+
+    public bool HasSelection()
+    {
+        return tileSelected;
+    }
+
+    public Transform GetSelectedTile()
+    {
+        return grid[currentSelected.x, currentSelected.y].transform;
+    }
 }
 
 public struct Coords
