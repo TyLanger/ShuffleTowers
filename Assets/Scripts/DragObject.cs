@@ -20,6 +20,8 @@ public class DragObject : MonoBehaviour
         mOffset = transform.position - GetMouseWorldPos();
 
         myCoords = GridBuilder.Instance.PositionToCoords(transform.position);
+        // select this
+        GridBuilder.Instance.TileSelected(myCoords);
     }
 
     private void OnMouseDrag()

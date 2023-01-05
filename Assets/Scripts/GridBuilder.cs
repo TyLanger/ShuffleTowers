@@ -15,8 +15,10 @@ public class GridBuilder : MonoBehaviour
 
     public static GridBuilder Instance;
 
+    public event System.Action<Transform> OnTileSelected;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         Instance = this;
 
@@ -90,6 +92,12 @@ public class GridBuilder : MonoBehaviour
 
         grid[a.x, a.y].SetDesiredPosition(GetPosition(a.x, a.y));
         grid[b.x, b.y].SetDesiredPosition(GetPosition(b.x, b.y));
+    }
+
+    public void TileSelected(Coords c)
+    {
+        var trans = grid[c.x, c.y].transform;
+        OnTileSelected?.Invoke(trans);
     }
 
 }
