@@ -16,7 +16,7 @@ public class GridBuilder : MonoBehaviour
     public static GridBuilder Instance;
 
     public event System.Action<Transform> OnTileSelected;
-    public event System.Action<Coords, Coords> OnTileSwapped;
+    public event System.Action<Tile, Tile> OnTileSwapped;
 
     public DeselectPlane plane;
 
@@ -46,7 +46,7 @@ public class GridBuilder : MonoBehaviour
                 Vector3 pos = GetPosition(i, j);
                 Tile copy = Instantiate(tilePrefab, transform.position, Quaternion.identity, transform);
                 copy.gameObject.name = string.Format("Tile {0}, {1}", i, j);
-                copy.SetDesiredPosition(pos);
+                copy.Initialize(pos, new Coords { x = i, y = j });
                 //Debug.Log("Pos: " + pos + "Coords: " + PositionToCoords(pos).x + ", " + PositionToCoords(pos).y);
                 grid[i, j] = copy;
 
@@ -94,7 +94,10 @@ public class GridBuilder : MonoBehaviour
 
     public void Swap(Coords a, Coords b)
     {
+        OnTileSwapped?.Invoke(grid[a.x, a.y], grid[b.x, b.y]);
 
+
+        //Debug.Log($"Swap {a} with {b}");
         Tile temp = grid[a.x, a.y];
         grid[a.x, a.y] = grid[b.x, b.y];
         grid[b.x, b.y] = temp;
@@ -110,7 +113,6 @@ public class GridBuilder : MonoBehaviour
             currentSelected = a;
         }
 
-        OnTileSwapped?.Invoke(b, a);
     }
 
     public void TileSelected(Coords c)
@@ -212,4 +214,9 @@ public struct Coords
 {
     public int x;
     public int y;
+
+    public override string ToString()
+    {
+        return $"{x}, {y}";
+    }
 }

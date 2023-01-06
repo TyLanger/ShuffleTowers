@@ -5,15 +5,13 @@ using UnityEngine;
 public class GoldSpawner : MonoBehaviour
 {
 
-    public Resource goldPrefab;
-
-    float timeTilSpawn = 5;
+    float timeTilSpawn = 2;
     float timeBetweenSpawns = 5;
 
     // Start is called before the first frame update
     void Start()
     {
-        timeTilSpawn = timeBetweenSpawns;
+        //timeTilSpawn = timeBetweenSpawns;
     }
 
     // Update is called once per frame
@@ -33,9 +31,11 @@ public class GoldSpawner : MonoBehaviour
         var neighbours = GridBuilder.Instance.GetNeighbours(transform.position);
 
         foreach(var n in neighbours) {
-            var copy = Instantiate(goldPrefab, n.transform.position + Vector3.up * 0.3f, Quaternion.identity);
-            copy.SetCoords(GridBuilder.Instance.PositionToCoords(n.transform.position));
-            //n.AddGold(1);
+
+            if (n.CanHoldGold())
+            {
+                n.AddGold(1);
+            }
         }
     }
 }

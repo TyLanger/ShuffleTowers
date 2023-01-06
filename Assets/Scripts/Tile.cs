@@ -5,7 +5,10 @@ using UnityEngine;
 public class Tile : MonoBehaviour
 {
 
+    public event System.Action<int> OnGoldChanged;
+
     Vector3 desiredPostion;
+    Coords myCoords;
 
     [SerializeField] float moveSpeed = 10;
     [SerializeField] TileType tileType;
@@ -18,6 +21,7 @@ public class Tile : MonoBehaviour
     void Start()
     {
         SetRandomTileType();
+        GridBuilder.Instance.OnTileSwapped += OnSwap;
     }
 
     // Update is called once per frame
@@ -34,6 +38,12 @@ public class Tile : MonoBehaviour
     public void BuiltTower()
     {
         hasTower = true;
+    }
+
+    public void Initialize(Vector3 pos, Coords c)
+    {
+        SetDesiredPosition(pos);
+        myCoords = c;
     }
 
     public void SetDesiredPosition(Vector3 pos)
@@ -75,12 +85,41 @@ public class Tile : MonoBehaviour
 
     public void AddGold(int count)
     {
+        //Debug.Log($"Add gold at {myCoords}. new = {goldCount} + {count}");
+
         goldCount += count;
+        OnGoldChanged?.Invoke(goldCount);
     }
 
     public void ClearGold()
     {
+        //Debug.Log($"Clear gold at {myCoords}. Was {goldCount}");
         goldCount = 0;
+        OnGoldChanged?.Invoke(goldCount);
+    }
+
+    public bool CanHoldGold()
+    {
+        // future:
+        // only accept gold if under the cap
+        // and don't have other resources
+        // assuming a ssytem where a tile only has 1 type at a time.
+        return true;
+    }
+
+    void OnSwap(Tile a, Tile b)
+    {
+        if(a == this)
+        {
+            if(goldCount > 0)
+            {
+                if(b.goldCount > 0)
+                {
+                    AddGold(b.goldCount);
+                    b.ClearGold();
+                }
+            }
+        }
     }
 
     public Vector3 GetOffset()
