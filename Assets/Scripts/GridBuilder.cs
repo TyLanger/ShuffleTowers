@@ -16,6 +16,7 @@ public class GridBuilder : MonoBehaviour
     public static GridBuilder Instance;
 
     public event System.Action<Transform> OnTileSelected;
+    public event System.Action<Coords, Coords> OnTileSwapped;
 
     public DeselectPlane plane;
 
@@ -81,6 +82,11 @@ public class GridBuilder : MonoBehaviour
         return c;
     }
 
+    public Tile GetTile(Coords c)
+    {
+        return grid[c.x, c.y];
+    }
+
     public bool IsInBounds(Coords c)
     {
         return c.x < width && c.y < height && c.x >= 0 && c.y >= 0;
@@ -88,6 +94,7 @@ public class GridBuilder : MonoBehaviour
 
     public void Swap(Coords a, Coords b)
     {
+
         Tile temp = grid[a.x, a.y];
         grid[a.x, a.y] = grid[b.x, b.y];
         grid[b.x, b.y] = temp;
@@ -102,6 +109,8 @@ public class GridBuilder : MonoBehaviour
         {
             currentSelected = a;
         }
+
+        OnTileSwapped?.Invoke(b, a);
     }
 
     public void TileSelected(Coords c)
@@ -142,6 +151,60 @@ public class GridBuilder : MonoBehaviour
     public Transform GetSelectedTile()
     {
         return grid[currentSelected.x, currentSelected.y].transform;
+    }
+
+    public Tile[] GetNeighbours(Vector3 position)
+    {
+        return GetNeighbours(PositionToCoords(position));
+    }
+
+    public Tile[] GetNeighbours(Coords center)
+    {
+        Tile[] v = new Tile[4];
+
+        Coords up = new Coords
+        {
+            x = center.x,
+            y = center.y + 1
+        };
+        if(IsInBounds(up))
+        {
+            v[0] = grid[up.x, up.y];
+        }
+        Coords right = new Coords
+        {
+            x = center.x + 1,
+            y = center.y
+        };
+        if (IsInBounds(right))
+        {
+            v[1] = grid[right.x, right.y];
+        }
+        Coords down = new Coords
+        {
+            x = center.x,
+            y = center.y - 1
+        };
+        if (IsInBounds(down))
+        {
+            v[2] = grid[down.x, down.y];
+        }
+        Coords left = new Coords
+        {
+            x = center.x - 1,
+            y = center.y
+        };
+        if (IsInBounds(left))
+        {
+            v[3] = grid[left.x, left.y];
+        }
+
+        return v;
+    }
+
+    public void AddGold(Coords c, int count)
+    {
+        grid[c.x, c.y].AddGold(count);
     }
 }
 
